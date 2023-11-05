@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { HttpClientService } from 'src/shared/http/http.service';
-import { HttpMethod, IRequestPayload } from 'src/shared/constants';
 import { IpfsBaseUrl } from './ipfs.types';
 import FormData = require('form-data');
 import fs from 'fs';
+import { HttpClientService } from '../../shared/http/http.service';
+import { HttpMethod, IRequestPayload } from '../../shared/constants';
 
 @Injectable()
 export class IpfsService {

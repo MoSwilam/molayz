@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '../auth/auth.types';
 import { AvatarDto } from './user.types';
-import { AuthDecorators } from 'src/shared/decorators/compose.decorators';
+import { AuthDecorators } from '../../shared/decorators/compose.decorators';
 
 @ApiTags('Users')
 @Controller('/user')

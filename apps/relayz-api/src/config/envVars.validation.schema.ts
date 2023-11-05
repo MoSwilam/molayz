@@ -1,5 +1,5 @@
 import * as Joi from '@hapi/joi';
-import { ENV } from 'src/shared/constants';
+import { ENV } from '../shared/types';
 
 export const ENV_VARS_VALIDATION_SCHEMA = {
   /** ENV */
