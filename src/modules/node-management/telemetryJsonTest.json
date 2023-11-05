@@ -1,0 +1,34 @@
+{
+  "nodeId": "5ccc7b7c-c86b-414f-9d07-134619892525",
+  "ownerId": "mosw.testnet",
+  "cpu": {
+    "brand": "",
+    "cores": 12,
+    "speed": "0 GHz",
+    "version": null
+  },
+  "ip": "149.90.189.28",
+  "ipV4RemoteLogin": "172.18.0.3",
+  "nodeOs": {
+    "uptime": "00:04:42"
+  },
+  "videoMeeting": {},
+  "region": "EU",
+  "memory": {
+    "totalmem": "7.7 GB",
+    "freemem": "5.8 GB"
+  },
+  "agentVersion": "v0.5.1",
+  "country": "Portugal",
+  "colibriStats": {
+    "shutdownState": "RUNNING",
+    "drain": false,
+    "time": 1697665500858,
+    "load-management": {},
+    "overall_bridge_jitter": 0,
+    "conferences": {},
+    "health": {}
+  },
+  "numberOfConferences": 0,
+  "traffic": 0
+}

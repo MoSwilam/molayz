@@ -1,0 +1,12 @@
+# localhost file
+# docker-compose.yml
+version: "3.3"
+services:
+  relayz-api:
+    image: relayz/api:1.0.1
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - 3443:443
+      - 3080:3000
+      # Dockerfile References: https://docs.docker.com/engine/reference/builder/

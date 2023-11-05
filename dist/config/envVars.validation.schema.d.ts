@@ -1,0 +1,21 @@
+export declare const ENV_VARS_VALIDATION_SCHEMA: {
+    NODE_ENV: any;
+    SERVER_PORT_HTTP: any;
+    SERVER_PORT_HTTPS: any;
+    APP_NAME: any;
+    APP_VERSION: any;
+    RELAYZ_VIDEO_PATH: any;
+    JWT_ISS: any;
+    JWT_AUD: any;
+    JWT_SUB: any;
+    JWT_JITSI_SECRET: any;
+    JWT_EXPIRE_DAYS: any;
+    DB_HOST: any;
+    DB_USERNAME: any;
+    DB_PASSWORD: any;
+    DB_NAME: any;
+    DB_COLLECTION: any;
+    SWAGGER_URI: any;
+    INFURA_API_KEY: any;
+    INFURA_API_SECRET: any;
+};

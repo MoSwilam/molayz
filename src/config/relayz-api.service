@@ -1,0 +1,21 @@
+# Relayz.io | Node API | 2022
+# copy this file to /lib/systemd/system/
+
+[Unit]
+Description=Relayz.io API
+After=network-online.target
+
+[Service]
+Restart=on-failure
+WorkingDirectory=/etc/relayz-api
+# do `which node` before config `ExecStart` path for service
+ExecStart=npm run start
+
+# Limit CPU and RAM quota for our service
+CPUAccounting=true
+CPUQuota=50%
+#MemoryAccounting=true
+#MemoryLimit=32M
+
+[Install]
+WantedBy=multi-user.target

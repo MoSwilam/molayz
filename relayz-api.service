@@ -1,0 +1,16 @@
+[Unit]
+Description=Relayz API
+After=network-online.target
+
+[Service]
+Restart=on-failure
+WorkingDirectory=/usr/share/relayz-api
+ExecStart=/root/.nvm/versions/node/v16.18.1/bin/node api.js
+# limit CPU and RAM quota for our service
+CPUAccounting=true
+CPUQuota=10%
+MemoryAccounting=true
+MemoryLimit=50M
+
+[Install]
+WantedBy=multi-user.target

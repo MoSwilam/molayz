@@ -1,0 +1,12 @@
+{
+  "user": {
+    "roomName": "Vasco - optional",
+    "nickname": "Joe"
+  },
+  "wallet": {
+    "address": "0x982164127490127390812039",
+    "chain": "near",
+    "networkEnv": "mainnet",
+    "name": "Near User"
+  }
+}

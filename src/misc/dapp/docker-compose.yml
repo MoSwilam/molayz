@@ -1,0 +1,61 @@
+version: "3.5"
+name: relayz-network
+networks:
+    relayz-network:
+        name: relayz-network
+        driver: bridge
+services:
+    relayz-node:
+        image: ghcr.io/relayz-io/relayz-dapp-node:v1.1
+        restart: ${RESTART_POLICY:-unless-stopped}
+        ports:
+            - '127.0.0.1:${JVB_COLIBRI_PORT:-8080}:8080'
+            - '10000-10300:10000-10300/udp'
+            - '9090:9090'
+        volumes:
+            - ~/.jitsi-meet-cfg/jvb:/config:Z
+        environment:
+            - DOCKER_HOST_ADDRESS
+            - ENABLE_COLIBRI_WEBSOCKET=true
+            - ENABLE_OCTO=true
+            - JVB_ADVERTISE_IPS=${RELAYZ_NODE_IP}
+            - JVB_ADVERTISE_PRIVATE_CANDIDATES
+            - JVB_AUTH_USER=jvb
+            - JVB_AUTH_PASSWORD=wNKm593L
+            - JVB_BREWERY_MUC
+            - JVB_DISABLE_STUN
+            - JVB_PORT
+            - JVB_MUC_NICKNAME
+            - JVB_STUN_SERVERS=turn.relayz.io:443
+            - JVB_OCTO_BIND_ADDRESS
+            - JVB_OCTO_RELAY_ID=${RELAYZ_NODE_UUID}
+            - JVB_WS_DOMAIN
+            - JVB_WS_SERVER_ID=${RELAYZ_NODE_IP}
+            - PUBLIC_URL=https://meet.relayz.io
+            - SENTRY_DSN="${JVB_SENTRY_DSN:-0}"
+            - SENTRY_ENVIRONMENT
+            - SENTRY_RELEASE
+            - COLIBRI_REST_ENABLED=true
+            - SHUTDOWN_REST_ENABLED
+            - TZ=UTC
+            - XMPP_AUTH_DOMAIN="auth.meet.relayz.io"
+            - XMPP_INTERNAL_MUC_DOMAIN="internal.auth.meet.relayz.io"
+            - XMPP_SERVER="meet.relayz.io"
+            - XMPP_PORT
+        networks:
+            - relayz-network
+    relayz-agent:
+        image: ghcr.io/relayz-io/relayz-dapp-agent-demo:v0.5.2
+        restart: ${RESTART_POLICY:-unless-stopped}
+        ports:
+             - 3001:3001
+        environment:
+            - ENV=prod
+            - RELAYZ_CREDENTIALS
+            - RELAYZ_NODE_UUID
+            - RELAYZ_NODE_IP
+            - RELAYZ_NODE_REGION
+        depends_on:
+            - relayz-node
+        networks:
+            - relayz-network

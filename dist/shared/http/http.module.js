@@ -1,0 +1,33 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HttpClientModule = void 0;
+const common_1 = require("@nestjs/common");
+const http_service_1 = require("./http.service");
+const axios_1 = require("@nestjs/axios");
+var HTTP_MODULE;
+(function (HTTP_MODULE) {
+    HTTP_MODULE[HTTP_MODULE["TIMEOUT"] = 5000] = "TIMEOUT";
+    HTTP_MODULE[HTTP_MODULE["MAX_REDIRECTS"] = 5] = "MAX_REDIRECTS";
+})(HTTP_MODULE || (HTTP_MODULE = {}));
+let HttpClientModule = class HttpClientModule {
+};
+HttpClientModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            axios_1.HttpModule.register({
+                timeout: HTTP_MODULE.TIMEOUT,
+                maxRedirects: HTTP_MODULE.MAX_REDIRECTS
+            })
+        ],
+        providers: [http_service_1.HttpClientService],
+        exports: [http_service_1.HttpClientService]
+    })
+], HttpClientModule);
+exports.HttpClientModule = HttpClientModule;
+//# sourceMappingURL=http.module.js.map

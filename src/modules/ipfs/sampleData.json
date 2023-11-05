@@ -1,0 +1,14 @@
+{
+  "ip": "192.173.18.17",
+  "ram": "64gb",
+  "totalPackets": "18273mbs",
+  "perMeeting": "7",
+  "load-management": {
+    "state": "NOT_OVERLOADED",
+    "stress": "0.05364",
+    "reducer_enabled": "false",
+    "reducer": {
+      "jvbLastN": -1
+    }
+  }
+}
