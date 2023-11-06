@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types as MongooseTypes } from 'mongoose';
 import { WalletEntity } from '../wallet/wallet.schema';
 import { AvatarDto } from './user.types';
+import { AbstractDocument } from '@app/common/database/abstract.schema';
 
-export type UserDocument = UserEntity & Document;
-@Schema({ timestamps: true, collection: 'users' })
-export class UserEntity {
+@Schema({ collection: 'users' })
+export class UserDocument extends AbstractDocument {
   @Prop()
   displayName: string;
 
@@ -59,4 +59,4 @@ export class UserEntity {
   loginType: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(UserEntity);
+export const UserSchema = SchemaFactory.createForClass(UserDocument);

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument, UserEntity } from './user.schema';
+import { UserDocument } from './user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto, LoginAgentDto, OldUserDto } from './../auth/auth.types';
 import { WalletDocument } from '../wallet/wallet.schema';
@@ -8,46 +8,45 @@ import { AvatarDto } from './user.types';
 import { log } from 'console';
 import { WalletService } from '../wallet/wallet.service';
 import { NodeService } from '../node-management/nodes.service';
+import { UserRepository } from './user.repo';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(UserEntity.name)
-    private userModel: Model<UserDocument>,
+    private readonly userRepo: UserRepository,
     private walletService: WalletService,
     private nodesService: NodeService
   ) {}
 
   async getUserByIdOrThrowError(id) {
-    const user = await this.userModel.findById(id);
+    const user = await this.userRepo.findById(id);
     if (!user) throw new NotFoundException();
     return user;
   }
 
-  async CreateUserAgent(payload: LoginAgentDto): Promise<UserDocument> {
-    const { id: userId } = await this.userModel.create(payload);
+  async CreateUserAgent(payload: LoginAgentDto) {
+    const { id: userId } = await this.userRepo.create(payload);
     const node = await this.nodesService.createNode({ userId, nodeId: payload.nodeId });
-    return await this.userModel.findOneAndUpdate(
+    return await this.userRepo.findOneAndUpdate(
       { _id: userId },
       { nodeDbId: node.id },
-      { new: true }
     );
   }
 
   async getUserByNodeId(nodeId: string) {
-    return !!(await this.userModel.findOne({ nodeId }));
+    return !!(await this.userRepo.findOne({ nodeId }));
   }
 
   async getUserByNickname(nickName: string) {
-    return await this.userModel.findOne({ nickName });
+    return await this.userRepo.findOne({ nickName });
   }
 
   async getOrCreateUser(payload: CreateUserDto): Promise<UserDocument> {
     const { accountId } = payload;
 
-    let user = await this.userModel.findOne({ accountId });
+    let user = await this.userRepo.findOne({ accountId });
     if (user) {
-      const updatePayload: Partial<UserEntity> = {};
+      const updatePayload: Partial<UserDocument> = {};
 
       if (payload.referredBy && !user.referredBy) {
         updatePayload.referredBy = payload.referredBy;
@@ -62,17 +61,17 @@ export class UserService {
       }
 
       if (Object.keys(updatePayload).length > 0) {
-        user = await this.userModel.findByIdAndUpdate(user.id, updatePayload, { new: true });
+        user = await this.userRepo.findByIdAndUpdate(user.id, updatePayload);
       }
     } else {
-      user = await this.userModel.create(payload);
+      user = await this.userRepo.create(payload);
     }
 
     return user;
   }
 
   async getUserByAccountId(accountId: string) {
-    const user = await this.userModel.findOne({ accountId });
+    const user = await this.userRepo.findOne({ accountId });
     return !!user;
   }
 
@@ -83,33 +82,32 @@ export class UserService {
   }
 
   async oldCreate(payload: OldUserDto): Promise<UserDocument> {
-    const doc = new this.userModel(payload);
-    return await doc.save();
+    return await this.userRepo.create(payload);
   }
 
-  async setMainAddress() {
-    const users = await this.userModel.find();
-    const promises = [];
+  // async setMainAddress() {
+  //   const users = await this.userRepo.find({});
+  //   const promises = [];
 
-    let counter = 0;
-    for (const user of users) {
-      const { id: userId, wallets } = user;
+  //   let counter = 0;
+  //   for (const user of users) {
+  //     const { id: userId, wallets } = user;
 
-      if (wallets && wallets.length) {
-        // extract the first wallet in the array
-        counter++;
-        const [walletId] = wallets;
-        const { address } = await this.walletService.findById(walletId);
-        promises.push(this.userModel.findByIdAndUpdate(userId, { mainAddress: address }));
-      }
-    }
+  //     if (wallets && wallets.length) {
+  //       // extract the first wallet in the array
+  //       counter++;
+  //       const [walletId] = wallets;
+  //       const { address } = await this.walletService.findById(walletId);
+  //       promises.push(this.userRepo.findByIdAndUpdate(userId, { mainAddress: address }));
+  //     }
+  //   }
 
-    log({ currentLog: counter });
-    return await Promise.all(promises);
-  }
+  //   log({ currentLog: counter });
+  //   return await Promise.all(promises);
+  // }
 
   async findUserByAccountId(accountId: string) {
-    return await this.userModel.findOne({ accountId });
+    return await this.userRepo.findOne({ accountId });
   }
 
   async setAvatar(avatar: AvatarDto) {
@@ -134,10 +132,9 @@ export class UserService {
 
     // return await this.userModel.findByIdAndUpdate(userFound.id, { avatar: avatarUrl })
 
-    const user = await this.userModel.findOneAndUpdate(
+    const user = await this.userRepo.findOneAndUpdate(
       { mainAddress: address },
       { avatar },
-      { new: true }
     );
     if (!user) throw new NotFoundException('Cannot set avatar, User not found!');
     return user;
@@ -149,23 +146,23 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.userModel.find().populate('wallets');
+    return await this.userRepo.find({},[ 'wallets']);
   }
 
   async findById(userId) {
-    return await this.userModel.findById(userId).populate('wallets');
+    return await this.userRepo.findById(userId);
   }
 
   async findByLoginAccId(loginAccId: string) {
-    const user = await this.userModel.findOne({ accountId: loginAccId });
+    const user = await this.userRepo.findOne({ accountId: loginAccId });
     if (!user)
       throw new NotFoundException(`User with this login account id: ${loginAccId} not found!`);
     return user;
   }
 
   async getAllUsersReferredByLoginAccountId(loginAccId: string) {
-    const user = await this.userModel.findOne({ accountId: loginAccId });
+    const user = await this.userRepo.findOne({ accountId: loginAccId });
     if (!user) throw new NotFoundException(`User with this id: ${loginAccId} not found!`);
-    return await this.userModel.find({ referredBy: loginAccId });
+    return await this.userRepo.find({ referredBy: loginAccId });
   }
 }

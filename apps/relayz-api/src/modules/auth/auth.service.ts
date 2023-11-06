@@ -15,10 +15,15 @@ import { NearService } from '../../shared/near-service'; // Substitua pelo camin
 import { NodeService } from '../node-management/nodes.service';
 import { FunctionCallPermissionView } from 'near-api-js/lib/providers/provider';
 import { KeyPair, keyStores, connect } from 'near-api-js'; // Importe KeyPair e NearConfig corretamente
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { UserDocument } from '../user/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel('User')
+    private readonly userModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
     private configService: ConfigService,
     private userService: UserService,
@@ -39,6 +44,9 @@ export class AuthService {
     const savedWallet = await this.walletService.getOrCreateWallet(wallet);
 
     await this.userService.addWalletToUser(savedUser, savedWallet);
+    savedUser.wallets.push(savedWallet);
+
+    await this.userModel.updateOne({ _id: savedUser.id }, { $set: { wallets: savedUser.wallets } });
 
     /** compose JWT payload */
     const jwtConfig = this.configService.get('jwt');
